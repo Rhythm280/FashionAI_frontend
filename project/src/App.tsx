@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { Header } from './components/Header';
 import { Categories } from './components/Categories';
@@ -57,16 +57,5 @@ function App() {
     </ThemeProvider>
   );
 }
-
-import axios from './api/axios'; // adjust the path to where you placed axios.ts
-
-axios.get('/fashion')
-  .then((res) => {
-    console.log(res.data); // replace with setState or your logic
-  })
-  .catch((err) => {
-    console.error('Error fetching fashion items:', err);
-  });
-
 
 export default App;
