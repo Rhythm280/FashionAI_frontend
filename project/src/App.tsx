@@ -58,4 +58,15 @@ function App() {
   );
 }
 
+import axios from './api/axios'; // adjust the path to where you placed axios.ts
+
+axios.get('/fashion')
+  .then((res) => {
+    console.log(res.data); // replace with setState or your logic
+  })
+  .catch((err) => {
+    console.error('Error fetching fashion items:', err);
+  });
+
+
 export default App;
