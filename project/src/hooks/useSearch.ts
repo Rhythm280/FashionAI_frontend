@@ -1,43 +1,32 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Product } from '../types';
-import { products } from '../data/mockData';
 
 export const useSearch = (query: string, selectedCategory: string) => {
-  const [results, setResults] = useState<Product[]>(products);
+  const [results, setResults] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const searchProducts = () => {
+    const searchProducts = async () => {
       setLoading(true);
-      
-      // Simulate API delay
-      setTimeout(() => {
-        // Filter products based on search query and category
-        let filteredProducts = products;
-        
-        if (query.trim()) {
-          const lowercaseQuery = query.toLowerCase();
-          
-          // Search by query in name, description
-          filteredProducts = filteredProducts.filter(product => 
-            product.name.toLowerCase().includes(lowercaseQuery) ||
-            product.description.toLowerCase().includes(lowercaseQuery)
-          );
-        }
-        
-        // Filter by category if not "All"
-        if (selectedCategory && selectedCategory !== 'All') {
-          filteredProducts = filteredProducts.filter(
-            product => product.category === selectedCategory
-          );
-        }
-        
-        setResults(filteredProducts);
+      try {
+        const response = await axios.post('http://localhost:5000/api/fashion-advice', {
+          query,
+          category: selectedCategory,
+        });
+        setResults(response.data.results);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      } finally {
         setLoading(false);
-      }, 500); // Simulated delay for search
+      }
     };
-    
-    searchProducts();
+
+    if (query.trim() !== '') {
+      searchProducts();
+    } else {
+      setResults([]);  // clear results if query is empty
+    }
   }, [query, selectedCategory]);
 
   return { results, loading };
