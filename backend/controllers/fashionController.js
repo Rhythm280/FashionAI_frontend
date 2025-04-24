@@ -1,38 +1,37 @@
-// controllers/fashionController.js
+const Fashion = require('../models/fashionModel');
 
-exports.getFashionAdvice = async (req, res) => {
-    const { query } = req.body;
-
+// Controller to create a new fashion item
+exports.createFashionItem = async (req, res) => {
     try {
-        // Placeholder response (Replace this with GPT-4 + RAG logic)
-        res.json({
-            results: [
-                {
-                    title: `Stylish pick for "${query}" mood`,
-                    image: "https://via.placeholder.com/200",
-                    description: "A trendy outfit suggestion based on your mood.",
-                    price: "$49.99",
-                },
-                {
-                    title: "Comfort Fit Joggers",
-                    image: "https://via.placeholder.com/200",
-                    description: "Ideal for a casual day out.",
-                    price: "$34.99",
-                },
-            ]
+        const { name, category, description, imageUrl } = req.body;
+
+        // Validate data if needed
+        if (!name || !category) {
+            return res.status(400).json({ message: 'Name and category are required' });
+        }
+
+        const newFashionItem = new Fashion({
+            name,
+            category,
+            description,
+            imageUrl,
         });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Something went wrong' });
+
+        await newFashionItem.save();
+        res.status(201).json(newFashionItem);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error creating fashion item' });
     }
 };
 
-exports.getFashionItems = (req, res) => {
-    // Placeholder - you'd fetch all items from DB here
-    res.json([]);
-};
-
-exports.getFashionItemById = (req, res) => {
-    // Placeholder - you'd fetch a single item by ID from DB
-    res.json({});
+// Controller to get all fashion items
+exports.getAllFashionItems = async (req, res) => {
+    try {
+        const fashionItems = await Fashion.find();
+        res.status(200).json(fashionItems);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error fetching fashion items' });
+    }
 };

@@ -1,34 +1,37 @@
-// app.js
-
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const mongoose = require('mongoose');
+require('dotenv').config();  // Make sure dotenv is loaded correctly
 const fashionRoutes = require('./routes/fashionRoutes');
-
-// Load environment variables from the .env file
-dotenv.config();
+const cors = require('cors');
+const express = require('express');
 
 const app = express();
 
-// Connect to MongoDB
-connectDB();
-
-// Middleware setup
-app.use(cors()); // Enable cross-origin requests
-app.use(bodyParser.json()); // Parse incoming JSON requests
+// Middleware
+app.use(express.json());  // Middleware to parse incoming JSON requests
+app.use(cors());  // Enable Cross-Origin Resource Sharing
 
 // Routes
-app.use('/api', fashionRoutes); // Use routes defined in fashionRoutes.js
+app.use('/api/fashion', fashionRoutes);
 
-// Error handling for unsupported routes
-app.use((req, res, next) => {
-    res.status(404).json({ message: 'Route not found' });
-});
+// MongoDB Connection
+const connectDB = async () => {
+    try {
+        const dbURI = process.env.MONGODB_URI; // MongoDB URI from the .env file
+        if (!dbURI) {
+            throw new Error('MongoDB URI is not defined');  // This will catch missing or incorrect URI
+        }
 
-// Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+        // Connect to MongoDB
+        await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log('MongoDB Connected');
+    } catch (err) {
+        console.error('MongoDB connection error: ', err.message);
+        process.exit(1);  // Exit the process if DB connection fails
+    }
+};
+
+connectDB();
+
+// Start Server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,10 +1,11 @@
-// routes/fashionRoutes.js
 const express = require('express');
 const router = express.Router();
-const fashionController = require('../controllers/fashionController');
+const fashionController = require('../controllers/fashionController');  // Make sure path is correct
 
-router.post('/fashion-advice', fashionController.getFashionAdvice);
-router.get('/fashion-items', fashionController.getFashionItems);
-router.get('/fashion-items/:id', fashionController.getFashionItemById);
+// Route to create a new fashion item
+router.post('/', fashionController.createFashionItem);
+
+// Route to get all fashion items
+router.get('/', fashionController.getAllFashionItems);
 
 module.exports = router;
