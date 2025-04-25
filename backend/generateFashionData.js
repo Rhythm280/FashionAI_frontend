@@ -5,7 +5,7 @@ const FashionItem = require("./models/FashionItem");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGODB_URI;
 
 if (!MONGO_URI) {
   console.error("❌ MONGO_URI is not defined. Please check your .env file.");

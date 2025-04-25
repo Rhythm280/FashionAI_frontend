@@ -3,20 +3,18 @@ const app = express();
 require("dotenv").config();
 
 const port = process.env.PORT || 3000;
-const connectDB = require("./config/db");
-
-
-const start = async () => {
+const connectDB = async () => {
   try {
-    await connectDB(process.env.MONGO_URI);
-    console.log("Connected to the database");
-    
-    app.listen(port, () => {
-      console.log(`Listening on port ${port}...`);
-    });
-  } catch (error) {
-    console.error("Failed to connect to the database:", error);
+    const dbURI = process.env.MONGODB_URI;
+    if (!dbURI) throw new Error('MongoDB URI is not defined');
+
+    await mongoose.connect(dbURI); // No extra options needed ✅
+    console.log('MongoDB Connected');
+  } catch (err) {
+    console.error('MongoDB connection error:', err.message);
+    process.exit(1);
   }
 };
+
 
 start();
